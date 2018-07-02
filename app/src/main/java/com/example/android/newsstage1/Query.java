@@ -1,5 +1,6 @@
 package com.example.android.newsstage1;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -19,11 +20,12 @@ import java.util.ArrayList;
 
 public class Query {
     public static final String LOG_TAG = MainNewsActivity.class.getSimpleName();
+    static Context mContext;
 
     public static ArrayList<News> extractNews(String NewsJSon) {
         ArrayList<News> NewsToday = new ArrayList<>();
         if (TextUtils.isEmpty(NewsJSon)) {
-            Log.e("Query", "NewsJSON is empty");
+            Log.e(mContext.getString(R.string.Query), mContext.getString(R.string.emptyJson));
             return null;
         }
         try {
@@ -31,11 +33,11 @@ public class Query {
             JSONObject NewsResponse;
             JSONArray resultsArray;
             baseJsonResponse = new JSONObject(NewsJSon);
-            if (baseJsonResponse.has("response")) {
-                NewsResponse = baseJsonResponse.getJSONObject("response");
+            if (baseJsonResponse.has(mContext.getString(R.string.response))) {
+                NewsResponse = baseJsonResponse.getJSONObject(mContext.getResources().getString(R.string.response));
 
-                if (NewsResponse.has("results")) {
-                    resultsArray = NewsResponse.getJSONArray("results");
+                if (NewsResponse.has(mContext.getString(R.string.results))) {
+                    resultsArray = NewsResponse.getJSONArray(mContext.getString(R.string.results));
 
                     for (int i = 0; i < resultsArray.length(); i++) {
                         String webTitle = "";
@@ -45,31 +47,31 @@ public class Query {
                         String thumbnail = "";
                         String contributor = "";
                         JSONObject currentNews = resultsArray.getJSONObject(i);
-                        if (currentNews.has("webTitle")) {
-                            webTitle = currentNews.getString("webTitle");
+                        if (currentNews.has(mContext.getString(R.string.webTitle))) {
+                            webTitle = currentNews.getString(mContext.getString(R.string.webTitle));
                         }
-                        if (currentNews.has("sectionName")) {
-                            sectionName = currentNews.getString("sectionName");
+                        if (currentNews.has(mContext.getString(R.string.sectionName))) {
+                            sectionName = currentNews.getString(mContext.getString(R.string.sectionName));
                         }
-                        if (currentNews.has("webUrl")) {
-                            webUrl = currentNews.getString("webUrl");
+                        if (currentNews.has(mContext.getString(R.string.webUrl))) {
+                            webUrl = currentNews.getString(mContext.getString(R.string.webUrl));
                         }
-                        if (currentNews.has("webPublicationDate")) {
-                            DateTime = currentNews.getString("webPublicationDate");
+                        if (currentNews.has(mContext.getString(R.string.webPublicationDate))) {
+                            DateTime = currentNews.getString(mContext.getString(R.string.webPublicationDate));
                         }
 
-                        if (currentNews.has("fields")) {
-                            JSONObject fields = currentNews.getJSONObject("fields");
-                            if (fields.has("thumbnail")) {
-                                thumbnail = fields.getString("thumbnail");
+                        if (currentNews.has(mContext.getString(R.string.fields))) {
+                            JSONObject fields = currentNews.getJSONObject(mContext.getString(R.string.fields));
+                            if (fields.has(mContext.getString(R.string.thumbnail))) {
+                                thumbnail = fields.getString(mContext.getString(R.string.thumbnail));
                             }
                         }
-                        if (currentNews.has("tags")) {
-                            JSONArray tagsArray = currentNews.getJSONArray("tags");
+                        if (currentNews.has(mContext.getString(R.string.tags))) {
+                            JSONArray tagsArray = currentNews.getJSONArray(mContext.getString(R.string.tags));
                             if (tagsArray.length() != 0) {
                                 JSONObject tags = tagsArray.getJSONObject(0);
-                                if (tags.has("webTitle")) {
-                                    contributor = tags.getString("webTitle");
+                                if (tags.has(mContext.getString(R.string.webTitle))) {
+                                    contributor = tags.getString(mContext.getString(R.string.webTitle));
                                 }
                             }
                         }
@@ -79,12 +81,13 @@ public class Query {
                 }
             }
         } catch (JSONException e) {
-            Log.e("QueryUtils", "Problem parsing the News JSON results", e);
+            Log.e(mContext.getString(R.string.QueryUtils), mContext.getString(R.string.ProblemWithResults), e);
         }
         return NewsToday;
     }
 
-    public static ArrayList<News> fetchNewsdata(String requestUrl) {
+    public static ArrayList<News> fetchNewsdata(String requestUrl, Context context) {
+        mContext = context;
         URL url = createUrl(requestUrl);
 
         // Perform HTTP request to the URL and receive a JSON response back
@@ -92,7 +95,7 @@ public class Query {
         try {
             jsonResponse = makeHttpRequest(url);
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem making the HTTP request", e);
+            Log.e(LOG_TAG, mContext.getString(R.string.ProblemWithHTTP), e);
         }
         ArrayList<News> newsNow = Query.extractNews(jsonResponse);
         return newsNow;
@@ -103,7 +106,7 @@ public class Query {
         try {
             url = new URL(stringUrl);
         } catch (MalformedURLException exception) {
-            Log.e(LOG_TAG, "Error with creating URL", exception);
+            Log.e(LOG_TAG, mContext.getString(R.string.ErrorWithUrl), exception);
             return null;
         }
         return url;
@@ -128,10 +131,10 @@ public class Query {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readFromStream(inputStream);
             } else {
-                Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
+                Log.e(LOG_TAG, mContext.getString(R.string.ErrorCode) + urlConnection.getResponseCode());
             }
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem retrieving the News JSON results", e);
+            Log.e(LOG_TAG, mContext.getString(R.string.ProblemRetrievingJSON), e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();

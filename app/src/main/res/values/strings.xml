@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">News Today</string>
+    <string name="response">response</string>
+    <string name="results">results</string>
+    <string name="webTitle">webTitle</string>
+    <string name="sectionName">sectionName</string>
+    <string name="webUrl">webUrl</string>
+    <string name="webPublicationDate">webPublicationDate</string>
+    <string name="fields">fields</string>
+    <string name="thumbnail">thumbnail</string>
+    <string name="tags">tags</string>
+    <string name="Query">Query</string>
+    <string name="emptyJson">NewsJSON is empty</string>
+    <string name="QueryUtils">QueryUtils</string>
+    <string name="ProblemWithResults">Problem parsing the News JSON results</string>
+    <string name="ProblemWithHTTP">Problem making the HTTP request</string>
+    <string name="ErrorWithUrl">Error with creating URL</string>
+    <string name="ErrorCode">Error response code:</string>
+    <string name="ProblemRetrievingJSON">Problem retrieving the News JSON results</string>
 </resources>

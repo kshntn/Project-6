@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class MainNewsActivity extends AppCompatActivity implements LoaderCallbacks<ArrayList<News>> {
 
     private static final int NEWS_LOADER_ID = 1;
-    private static final String NEWS_REQUEST_URL = "https://content.guardianapis.com/search?q=NOT%20Sport&api-key=*ENTERKEY**&show-fields=thumbnail&show-tags=contributor";
+    private static final String NEWS_REQUEST_URL = "https://content.guardianapis.com/search?q=NOT%20Sport&api-key=*ENTERKEY***&show-fields=thumbnail&show-tags=contributor";
     private ImageView mEmptyStateTextView;
     private NewsAdapter mAdapter;
 
