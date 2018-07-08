@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class MainNewsActivity extends AppCompatActivity implements LoaderCallbacks<ArrayList<News>> {
 
     private static final int NEWS_LOADER_ID = 1;
-    private static final String NEWS_REQUEST_URL = "https://content.guardianapis.com/search?&api-key=51c50fff-cb61-4d36-8990-3e5990aa31b7&show-fields=thumbnail&show-tags=contributor";
+    private static final String NEWS_REQUEST_URL = "https://content.guardianapis.com/search?&api-key=***EnterKEY**&show-fields=thumbnail&show-tags=contributor";
     private ImageView mEmptyStateTextView;
     private NewsAdapter mAdapter;
 
