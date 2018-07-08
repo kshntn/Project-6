@@ -5,11 +5,15 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -20,7 +24,7 @@ import java.util.ArrayList;
 public class MainNewsActivity extends AppCompatActivity implements LoaderCallbacks<ArrayList<News>> {
 
     private static final int NEWS_LOADER_ID = 1;
-    private static final String NEWS_REQUEST_URL = "https://content.guardianapis.com/search?q=NOT%20Sport&api-key=*ENTERKEY***&show-fields=thumbnail&show-tags=contributor";
+    private static final String NEWS_REQUEST_URL = "https://content.guardianapis.com/search?&api-key=51c50fff-cb61-4d36-8990-3e5990aa31b7&show-fields=thumbnail&show-tags=contributor";
     private ImageView mEmptyStateTextView;
     private NewsAdapter mAdapter;
 
@@ -61,7 +65,30 @@ public class MainNewsActivity extends AppCompatActivity implements LoaderCallbac
 
     @Override
     public Loader<ArrayList<News>> onCreateLoader(int i, Bundle bundle) {
-        return new NewsLoader(this, NEWS_REQUEST_URL);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String Search = sharedPrefs.getString(getString(R.string.settings_search_key), getString(R.string.settings_Search_default));
+        String orderBy = sharedPrefs.getString(getString(R.string.settings_order_by_key), getString(R.string.settings_order_by_default));
+        String section = sharedPrefs.getString(getString(R.string.settings_section_key), getString(R.string.settings_section_default));
+
+        Uri baseUri = Uri.parse(NEWS_REQUEST_URL);
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+        if (!Search.equals("")) {
+            uriBuilder.appendQueryParameter("q", Search);
+            orderBy = getString(R.string.settings_order_by_relevance_value);
+        }
+        if (Search.equals("") && orderBy.equals(getString(R.string.settings_order_by_relevance_value))) {
+            orderBy = getString(R.string.settings_order_by_newest_value);
+        }
+        if (!section.equals("")) {
+            if (!section.equals(getString(R.string.settings_section_default_value))) {
+                uriBuilder.appendQueryParameter("section", section);
+            }
+        }
+
+        uriBuilder.appendQueryParameter("order-by", orderBy);
+
+        return new NewsLoader(this, uriBuilder.toString());
     }
 
     @Override
@@ -79,5 +106,22 @@ public class MainNewsActivity extends AppCompatActivity implements LoaderCallbac
     @Override
     public void onLoaderReset(Loader<ArrayList<News>> loader) {
         mAdapter.clear();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
